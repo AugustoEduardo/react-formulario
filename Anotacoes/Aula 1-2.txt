@@ -1,0 +1,124 @@
+Começamos esse curso da mesma forma que o curso anterior: Instalamos o React através do PowerShell digitando
+"npx create-react-app react-app". A única diferença está no nome do programa, pode ser o que quiser, botei
+simplesmente react-app por conveniência.
+
+Depois digite "cd react-app" e aí "code ." para abrir o VSCode dentro da pasta do programa. Exclua os seguintes
+arquivos: "app.test.js", "logo.svg", "reportWebVitals.js" e "setupTests.js".
+
+Para iniciar o programa, digite no Terminal do VSCode: npm start
+
+Exclua tudo o que estiver dentro do return no App.js. Daí crie um título, Formulário de Cadastro, e depois apague
+o reportWebVitals do index.js, junto com seu import.
+
+
+
+
+Neste curso, vamos trabalhar de uma forma um pouco diferente do que fizemos nos Reacts passados.
+
+- Uma função que retorna algo tem a mesma funcionalidade que uma classe que extende um Component, contanto que ela
+renderize esse retorno.
+
+
+class App extends Component {
+
+  render(){
+    return (
+      <h1>Formulário de Cadastro</h1>
+    );
+  }
+}
+
+export default App;
+
+
+Por enquanto deixaremos o código assim para efeitos de comparação com as funções que usaremos futuramente, já que o
+React trabalha muito mais com funções.
+
+Dentro da pasta src, crie uma pasta chamada components, da qual terá outra pasta, FormularioCadastro. Esta, por sinal,
+terá um arquivo FormularioCadastro.jsx.
+JSX é um subconjunto do Javascript, que nos dá uma outra sintex para trabalhar.
+
+
+Se quiser, instale o plugin "Simple React Snippets", pois ele vai auto preencher alguns comandos comumente usados.
+Ex: "imr" se tornará "import React from 'react'"
+
+
+No FormularioCadastro.jsx:
+
+import React from "react";
+
+function FormularioCadastro(){
+
+}
+
+export default FormularioCadastro
+
+
+
+Daí, chamamos a função no App.js:
+
+class App extends Component {
+
+  render(){
+    return (
+      <h1>Formulário de Cadastro</h1>
+      <FormularioCadastro/>
+    );
+  }
+}
+
+export default App;
+
+
+
+O console vai dar erro porque o JSX só pode retornar 1 elemento pai - estamos retornando dois, o h1 e a função.
+A gente corrige isso usando aquela curiosidade vista no final do curso anterior, encapsulando os dois elementos
+numa tag vazia, também conhecida como <Fragment>.
+
+
+
+class App extends Component {
+
+  render(){
+    return (
+      <>
+      <h1>Formulário de Cadastro</h1>
+      <FormularioCadastro/>
+      </>
+    );
+  }
+}
+
+export default App;
+
+
+Se der erro, provavelmente é porque nosso FormularioCadastro.jsx não tem um return. Vamos consertar isso.
+Coloque um <form> que contenha um <input> do tipo texto.
+
+
+function FormularioCadastro(){
+    return (
+        <form>
+            <input type='text'/>
+        </form>
+    )
+}
+
+
+
+
+
+
+[Lembrando]
+
+Existem duas formas de escrevermos componentes no React. Podemos escrever componentes como classes ou funções.
+
+
+- Um function component é mais simples de ler e normalmente possui menos código do que um class component.
+Normalmente a leitura e o entendimento de um function component é mais simples do que em um class component.
+Isso porque, sem usarmos o state e outros métodos de ciclo de vida do react, um function component é apenas uma
+função JS simples que retorna um elemento JSX.
+
+- Class components são uma forma mais antiga de se escrever componentes dentro do React.
+Mas isso não significa que eles são piores ou que não devem ser utilizados. Classes e Orientação a Objetos são
+uma feature da linguagem e podem ser utilizados normalmente.
