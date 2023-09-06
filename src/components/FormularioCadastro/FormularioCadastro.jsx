@@ -1,18 +1,51 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, TextField, FormControlLabel, Switch } from "@mui/material";
 
-function FormularioCadastro(){
+function FormularioCadastro() {
+    const [nome, setNome] = useState("");
+    
     return (
-        <form>
-            <TextField id="Nome" label="Nome" color="primary" variant="outlined" margin="normal" required fullWidth/>
+        <form onSubmit={event => {
+            event.preventDefault();
+            console.log(nome)
+        }}>
+            <TextField
+                onChange={event => setNome(event.target.value)}
+                id="Nome"
+                label="Nome"
+                color="primary"
+                variant="outlined"
+                margin="normal"
+                fullWidth
+            />
 
-            <TextField id="Sobrenome" label="Sobrenome" color="primary" variant="outlined" margin="normal" required fullWidth/>
+            <TextField
+                id="Sobrenome"
+                label="Sobrenome"
+                color="primary"
+                variant="outlined" 
+                margin="normal"
+                fullWidth
+            />
 
-            <TextField id="CPF" label="CPF" color="primary" variant="outlined" margin="normal" required fullWidth/>
+            <TextField
+                id="CPF"
+                label="CPF"
+                color="primary"
+                variant="outlined"
+                margin="normal"
+                fullWidth
+            />
 
-            <FormControlLabel control={<Switch name="Promoções" defaultChecked />} label="Promoções"/>
+            <FormControlLabel
+                control={<Switch name="Promoções" defaultChecked />}
+                label="Promoções"
+            />
 
-            <FormControlLabel control={<Switch name="Novidades" defaultChecked color="secondary"/>} label="Novidades"/>
+            <FormControlLabel
+                control={<Switch name="Novidades" defaultChecked color="secondary" />}
+                label="Novidades"
+            />
 
             <Button type="submit" variant="contained">
                 Cadastrar

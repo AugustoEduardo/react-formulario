@@ -1,0 +1,84 @@
+Quero clicar no botão de Cadastrar para que o formulário receba as informações preenchidas.
+
+O TextField tem a propriedade onChange. No onChange eu quero criar uma nova função e essa função
+vai pegar o valor do campo e jogar para uma variável.
+
+Crio uma arrow function que vai receber o *evento*. Como vou ter uma variável dentro da função, tenho
+que criar um let nome="" fora do return. Por enquanto quero que o evento retorne o que estiver preenchido.
+
+
+<TextField onChange={event => console.log(event)} />
+
+
+O console vai retornar um objeto de evento quando clicamos na caixa de texto. E esse objeto tem o target.
+
+
+<TextField onChange={event => console.log(event.target.value)} />
+
+
+Conforme visto em cursos anteriores, target é a própria caixa de texto sendo disparada
+e value é o seu valor. Com isso, estamos gravando no console toda mudança feita no textbox.
+
+Sabemos que target.value pega o que está sendo digitado. Então vamos fazer a variável "nome" receber isso.
+E eu também quero que o botão Cadastrar envie os dados preenchidos. Por isso temos que ir ao <form> e usar a
+propriedade onSubmit, que também terá uma arrow function com event e que vai imprimir o nome no console.
+
+
+
+<form onSubmit={event => {
+    event.preventDefault();
+    console.log(nome)
+}}>
+    <TextField
+        onChange={event => nome = event.target.value}
+
+
+
+
+(Então, a gente tem que vir agora no nosso componente, no nosso function component, nosso formulário de cadastro,
+e pedir para ele usar um estado. Eu quero fazer uma função, guardar uma informação, e ele manter esse estado na
+memória do computador, durante o ciclo de vida de um componente do react.)
+
+
+(No react, para a gente conseguir guardar um estado, já que é uma função primária do react a gente ter esse estado
+e forçar uma renderização naquele componente, foram criados os hooks.)
+
+
+Fazemos isso através do useState. O estado que eu quero usar é o nome, e o useState normalmente é declarado com uma
+constante.
+O useState me devolve uma variável, que eu posso referenciar para saber qual é o estado que está guardado dentro
+daquele componente. E como vimos nos cursos anteriores, o useState não devolve só o valor inicial do meu estado para
+uma variável que eu possa usar, ele devolve um array com dois elementos: a variável que representa o estado inicial
+e a função para atribuir um novo estado a essa variável.
+
+
+
+const [nome, setNome] = useState("");     // Inicialmente, o "nome" é vazio
+
+
+<TextField
+    onChange={event => setNome(event.target.value)}
+
+
+(Quando digitarmos algo no campo de texto, seu evento muda e, com o setNome, o novo valor de "nome"
+será tudo o que for digitado. Este novo valor será armazenado.)
+
+
+
+
+
+
+
+[Exercício]
+
+
+Ao utilizamos o hook de useState, indicamos para o React que aquele componente quer guardar estado.
+Para isso, são devolvidas duas informações, a primeira é a referência para o valor do estado atual e a segunda
+é a função que altera esse estado.
+Por que precisamos dessa separação?
+
+
+- Precisamos dessa separação para que o React consiga fazer o gerenciamento do componente e chamar o
+ciclo de renderização quando o estado for alterado.
+Com essa separação o React consegue fazer a sincronização entre as alterações de estado e o ciclo de vida do componente.
+Por isso que nunca devemos fazer a alteração do estado diretamente.
