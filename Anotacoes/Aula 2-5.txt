@@ -1,0 +1,33 @@
+Para o checkbox de Promoções e Novidades, o Interruptor / Switch é bastante usado nos designs de hoje em dia.
+O Switch básico não mostra o label, então usaremos o tipo de switch que o contém, que é o <FormControlLabel>.
+
+
+<FormControlLabel control={<Switch defaultChecked />} label="Novidades"/>
+
+
+- Em nosso exemplo, não é necessário usar o FormGroup.
+- control={} é o que o FormControlLabel está controlando. Pode ser um Checkbox, um Switch ou um Radio.
+- defaultChecked faz com que o botão esteja checado / confirmado / ativado por padrão. Existe o checked={true},
+mas isto faz com que o interruptor seja sempre verdadeiro, de forma que não seja possível desligá-lo.
+
+
+
+
+Agora vamos mexer no <h1>. O Material UI responsável pelo título é a Tipografia (Data Display > Typography).
+Na documentação, ele sugere que façamos a instalação da fonte Roboto. Neste caso, iremos executá-la no terminal.
+
+
+npm install @fontsource/roboto
+
+
+Ao fazer a importação no App.js, usaremos o tamanho 400. Importe também o Typography.
+
+
+import '@fontsource/roboto/400.css'
+
+
+<Typography variant="h3" component="h1">Formulário de Cadastro</Typography>
+
+
+- variant é o tamanho da fonte que queremos ver. h1 é o maior tamanho, e vai diminuindo progressivamente até o h6.
+- component="h1" fará com que ele se comporte como um h1 (veja no console do navegador).
