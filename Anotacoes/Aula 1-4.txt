@@ -1,0 +1,24 @@
+Após criar todos os inputs, temos nosso formulário "cru".
+Do jeito que fizemos, ele ficou básico demais, como se estivesse sido feito pelo HTML. A gente pode até
+mexer no visual com o CSS, mas para isso teríamos que fazer várias alterações no layout, na posição, cor, etc.
+Existe uma outra maneira bem mais rápida de estilizar o formulário sem mexer no CSS.
+
+
+Instalaremos o pacote "Material UI" (https://mui.com/material-ui/getting-started/installation/). De acordo com
+o site oficial, temos que instalar três pacotes separadamente:
+
+npm install @mui/material
+npm install @emotion/react
+npm install @emotion/styled
+
+
+Daí, voltamos ao FormularioCadastro.jsx e fazemos o import do nosso botão.
+
+import { Button } from "@mui/material";
+
+(O React pode te dar a sugestão do nome correto da importação enquanto você digita)
+
+
+Como pode ver, o botão nada mais é do que a tag <Button>, com "b" maiúsculo. Salvando o arquivo e fechando a página,
+ele até fica melhor, mas continua não muito agradável. Na seção de Usage / Uso da página do Material UI, vemos
+que é necessário usar variant="contained" para melhorar esse visual.
