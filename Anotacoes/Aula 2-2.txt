@@ -1,0 +1,69 @@
+Estude bem a documentação do site do Material UI. Ali tem escrito todas as formas diferentes de decorar
+e formatar seu código.
+
+https://mui.com/material-ui/getting-started/
+
+
+Em "Components", você pode encontrar formas de diversificar tudo o que é encontrado em formulários:
+Campos de Texto e Botões, por exemplo, estão dentro de Input > Button e Input > Text Field, respectivamente.
+Tem também Containers, Links, Checkbox... vale a pena dar uma olhada.
+
+
+
+Em "Component API" estão disponíveis as propriedades para o que você tiver que usar, assim como a(s) maneira(s)
+de importá-lo(s).
+Veja o TextField, por exemplo. Temos o "id" que funciona da mesma maneira que o "alt" de uma tag <img> do HTML,
+placeholder, required...
+Algumas propriedades, como a "variant", contém os exemplos possíveis.
+
+
+- "fullwidth" pega todo o tamanho do <form>
+
+
+
+
+
+Pois bem, Inspecionando nossos textboxes, vemos que eles são encapsulados pelo <form>, do qual está na mesma hierarquia
+do h1. Mas não tem nenhum container para o form e o h1.
+No nosso código, colocamos o <Fragment>, mas ele não é renderizado pelo navegador. Ele só serve como função do React.
+Então, em vez de usar o Fragment, onde não consigo ter estilo, onde não consigo ter layout em cima dele, vou usar
+uma tag Container, da qual podemos pegar no Material UI.
+
+(O <div id="root"> não está encapsulando o cabeçalho formado pelo h1 e pelo form, ele está encapsulando a página inteira!)
+
+
+- A documentação pode ser vista em Components > Layout > Container.
+- Os exemplos e propriedades estão em Component API > Container.
+
+
+Trocando o <Fragment> pelo <Container> no App.js (e importando o Container), pode ver que o formulário ganhou um espaçamento
+lateral.
+
+(Eu posso adicionar classes para ele. Eu posso mudar o elemento que eu quero que ele use. Por padrão ele está usando div.
+Como a gente viu, ele criou uma div englobando o <form> e o <h1> quando usamos <Container>.
+
+Mas, no nosso caso, se eu tenho um formulário, e ele é autocontido, porque eu posso tirar ele de uma página e jogar para outra,
+ele, na verdade, deveria ser um article.
+Então, vamos mudar o componente dele para ele virar um article? Porque ele é mais semântico se eu usar o article, porque ele
+é autocontido dentro da minha página.)
+
+
+
+- maxwidth="sm" no <Container> deixa o formulário num tamanho mais adequado e centralizado. (sm=small)
+- margin="normal" nos <TextField/> adiciona um espaçamento entre os campos de texto, enquanto que o margin="dense" deixa-os
+mais justos.
+
+
+
+
+
+[Resumo]
+
+Ao importarmos a biblioteca Material UI para o projeto conseguimos criar componentes que tem uma estilização padrão
+e dessa forma a prototipação de nossas telas fica muito mais simples e não precisamos nos preocupar com a criação de CSS.
+
+Apesar disso esses componentes tem uma API que podemos usar para alterar pequenas partes do estilo deles.
+Na utilização dessa API, passamos parâmetros para os componentes do Material UI a partir das propriedades do objeto.
+
+Repare que essa biblioteca cria componentes extremamente customizáveis a partir de um conjunto de propriedades.
+Na hora em que você estiver criando seus componentes, pense em usar propriedades de modo que eles sejam mais reutilizáveis.
