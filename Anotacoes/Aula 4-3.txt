@@ -1,0 +1,48 @@
+[Regras dos Hooks (https://pt-br.legacy.reactjs.org/docs/hooks-rules.html)]
+
+- Não use Hooks dentro de loops, regras condicionais ou funções aninhadas (funções dentro de funções).
+- Não use Hooks dentro de funções JavaScript comuns.
+
+
+
+Termine de fazer o useState para os outros componentes (cpf, promoções e novidades). Para promoções e
+novidades, em vez de darmos um valor vazio, o useState tem que ter um valor inicial "true" ou "false",
+pois tratam-se de interruptores. Faríamos o mesmo se eles fossem checkboxes.
+
+Aliás, faltou inserir um value={} no TextField do nome e sobrenome. Faça isso e aproveite para adicionar
+também no cpf.
+
+
+Para o FormControlLabel das promoções e novidades, já é um pouco diferente. O defaultChecked tem que ser
+igual a promocoes e novidades, respectivamente. O onChange tem que estar dentro do <Switch> e, além disso,
+o set recebe event.target.checked em vez de target.value porque é assim que funciona para switches e checkboxes.
+
+O problema é que quando vou (des)ligar os interruptores, aparece uma mensagem de erro no console dizendo que
+estamos mudando o state padrão de um Switch não controlado. Isso porque a gente não colocou a variável value.
+Aqui, porém, usamos o checked, que é o "value do FormControlLabel". Com o checked declarado, apagamos o defaultChecked.
+Porque é o checked quem controla o valor do componente, assim como o value do TextField.
+Com isso, eu tenho dois switches controlados porque o valor dele só é atribuído a partir de um valor do meu componente, “pai”.
+
+
+
+E também, vou passar meu console.log entre chaves, para que quando clicarmos em Cadastrar, ele vai retornar as entradas
+do formulário como um objeto. Mais pra frente iremos ver como pegar o retorno desse objeto, em formato de lista, e usarmos
+para todo o resto do programa. Porque sem as chaves, sem o formato de objeto, os dados cadastrados só vão servir para essa
+parte inicial do código e não poderão ser reaproveitados, ou seja, não vai dar para armazená-los no banco de dados.
+
+
+
+<form onSubmit={event => {
+    event.preventDefault();
+    console.log({nome, sobrenome, cpf, promocoes, novidades});
+}}>
+
+
+
+
+Curiosidade:
+Se o Switch tiver o defaultChecked, mas não tiver o onChange, podemos alterar o valor do interruptor à vontade.
+
+Se o Switch tiver o checked, mas sem o onChange, não será possível ligar ou desligar o interruptor. Porque ele está
+considerando o componente como um componente controlado. Uma vez que ele é controlado, eu preciso do onChange e do valor
+do setPromocoes / setNovidades para ele ser renderizado novamente.

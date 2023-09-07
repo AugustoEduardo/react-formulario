@@ -4,14 +4,18 @@ import { Button, TextField, FormControlLabel, Switch } from "@mui/material";
 function FormularioCadastro() {
     const [nome, setNome] = useState("");
     const [sobrenome, setSobrenome] = useState("");
+    const [cpf, setCpf] = useState("");
+    const [promocoes, setPromocoes] = useState(true);
+    const [novidades, setNovidades] = useState(true);
 
     return (
         <form onSubmit={event => {
             event.preventDefault();
-            console.log(nome, sobrenome)
+            console.log({nome, sobrenome, cpf, promocoes, novidades});
         }}>
             <TextField
                 onChange={event => setNome(event.target.value)}
+                value={nome}
                 id="Nome"
                 label="Nome"
                 color="primary"
@@ -22,6 +26,7 @@ function FormularioCadastro() {
 
             <TextField
                 onChange={event => setSobrenome(event.target.value)}
+                value={sobrenome}
                 id="Sobrenome"
                 label="Sobrenome"
                 color="primary"
@@ -31,6 +36,8 @@ function FormularioCadastro() {
             />
 
             <TextField
+                onChange={event => setCpf(event.target.value)}
+                value={cpf}
                 id="CPF"
                 label="CPF"
                 color="primary"
@@ -40,12 +47,16 @@ function FormularioCadastro() {
             />
 
             <FormControlLabel
-                control={<Switch name="Promoções" defaultChecked />}
+                checked={promocoes}
+                control={<Switch onChange={(event) => setPromocoes(event.target.checked)}
+                name="Promoções"/>}
                 label="Promoções"
             />
 
             <FormControlLabel
-                control={<Switch name="Novidades" defaultChecked color="secondary" />}
+                checked={novidades}
+                control={<Switch onChange={(event) => setNovidades(event.target.checked)}
+                name="Novidades" color="secondary" />}
                 label="Novidades"
             />
 
