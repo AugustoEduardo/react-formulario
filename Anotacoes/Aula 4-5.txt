@@ -1,0 +1,118 @@
+(Então, agora que a gente já terminou de fazer a parte de gerenciamento de estado do nosso formulário, tendo todo
+o meu estado de nome, sobrenome, CPF, novidades e promoções, vindo através de um objeto, a gente consegue
+pegar e começar a fazer a parte de lógica desse formulário, para ele realmente executar alguma coisa tirando desse
+componente, fazendo aquela injeção de dependência.
+Porque aí eu consigo reutilizar esse formulário em vários outros projetos se eu precisar dele.)
+
+
+
+Indo no FormularioCadastro.jsx, vou retirar o console.log porque eu não quero ter essa lógica embutida no formulário.
+Eu quero que ele venha por uma propriedade - eu teria que chamar o onSubmit do <form> no <FormularioCadastro> do App.js.
+
+
+<FormularioCadastro onSubmit={}/>
+
+
+Mas eu posso chamar esse onSubmit do que eu quiser, posso chamar de aoEnviar. E esse aoEnviar receberá uma função
+que eu vou criar no mesmo arquivo. Essa função receberá como parâmetro os dados do meu formulário, e eu quero fazer
+um console.log desses dados. No arquivo original, aoEnviar vai ter que passar os "dados" do formulário na hora em que
+foi submetido.
+(aoEnviar será declarado e definido no FormularioCadastro.jsx)
+
+
+<FormularioCadastro aoEnviar={aoEnviarForm}/>
+
+..........
+
+function aoEnviarForm(dados){
+    console.log(dados)
+}
+
+
+
+Eu posso, no FormularioCadastro.jsx, colocar "props" como parâmetro da função e daí chamar o props.aoEnviar, com os
+dados do formulário, no <form>.
+
+
+function FormularioCadastro(props) {
+
+    ........
+
+    return (
+        <form onSubmit={event => {
+            event.preventDefault();
+            props.aoEnviar({nome, sobrenome, cpf, promocoes, novidades});
+        }}>
+    )
+
+    ........
+}
+
+
+
+
+(Então a gente conseguiu enviar uma propriedade para o nosso componente, e a maneira de receber é através das propriedades,
+dos parâmetros que essa função vai receber.)
+
+
+
+Mas uma coisa que a gente pode evitar é usar o props como parâmetro. Por quê?
+Porque nos componentes eu tenho um monte de propriedades que quero mexer: value, label, variant, margin, onChange...
+Daí eu teria que usar props em tudo! props.label, props.margin, props. variant...
+O código até funciona sem nenhum erro fazendo dessa maneira, mas daí ele fica muito repetitivo e você acaba gerando ruído
+dentro do código, porque o props aqui não significa muita coisa.
+
+
+(Na verdade, significa que veio de uma propriedade, mas isso não interessa na hora que você está usando esse formulário.
+O que normalmente a gente faz é uma desconstrução desse objeto de props que vem para gente. Porque ele sempre vai ser um objeto.
+E aí, para fazer a desconstrução dele, a gente faz a mesma ideia que a gente fez na desconstrução de um array.
+
+Vou desconstruir esse objeto, que vai ser meu primeiro parâmetro. Como um objeto é representado por chaves,
+e o elemento que eu quero pegar é desse objeto que eu estou descontruindo, uso como parâmetro o "aoEnviar".)
+
+
+
+
+function FormularioCadastro({aoEnviar}) {
+...........
+
+    return (
+        <form onSubmit={event => {
+            event.preventDefault();
+            aoEnviar({nome, sobrenome, cpf, promocoes, novidades});
+        }}>
+    ........
+    )
+}
+
+
+
+
+
+
+
+
+[Resumo]
+
+
+Ao recebermos propriedades dentro de um function component do React, elas ficam salvas em um objeto que é o
+primeiro parâmetro passado para essa função.
+
+Por exemplo:
+
+function Nota(props){
+    return(
+        <>
+            <h1>{props.titulo}</h1>
+            <h2>{props.subtitulo}</h2>
+        </>
+    )
+}
+
+Uma outra forma de declaração que podemos usar para receber propriedades e atribuí-las diretamente a variáveis é:
+
+
+function Nota({titulo, subtitulo})
+
+
+Essa técnica é chamada de desconstrução de objetos e podemos fazer ela com Arrays também.
