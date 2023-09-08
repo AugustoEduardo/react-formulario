@@ -1,0 +1,69 @@
+Vamos deixar a função de validação no App.js, assim como foi feito com o aoEnviar.
+
+
+function validarCPF(cpf){
+  if (cpf.length !== 11){
+    return ({valido:false, texto:"CPF deve ter exatamente 11 dígitos"})
+  } else {
+    return ({valido:true, texto:""})
+  }
+}
+
+<FormularioCadastro aoEnviar={aoEnviarForm} validarCPF={validarCPF}/>
+
+
+
+Em seguida, temos que declarar a função validarCPF como parâmetro da função FormularioCadastro. E depois
+usá-la no onBlur do CPF.
+
+
+
+onBlur={(event) => {
+    const ehValido = validarCPF(event.target.value)
+    setErros({cpf:{valido:false, texto: "CPF deve ter 11 digitos"}})
+}}
+
+
+
+- validarCPF(event.target.value): Eu vou passar o valor que eu tenho nesse campo, para ele validar o meu objeto.
+Posso também usar validarCPF(cpf), ou seja, o estado de cpf.
+E na hora de atribuir um erro, no setErros, vou dizer que o cpf será ehValido.
+
+
+
+onBlur={(event) => {
+    const ehValido = validarCPF(event.target.value)
+    setErros({cpf:ehValido})
+}}
+
+
+
+
+
+
+[Exercício]
+
+Ao criarmos a função de validação do nosso formulário, preferimos deixar ela fora do componente formulário.
+Qual o beneficio de organizarmos nosso código dessa maneira?
+
+- Deixando a função de validação fora do formulário, podemos alterar as validações dependendo da parte do projeto
+que estamos trabalhando, o que torna esse componente mais reutilizável.
+Recebendo a função de validação por propriedades, conseguimos fazer com que nosso formulário seja mais flexível.
+
+
+
+
+
+[Para treinar]
+
+- Você sabia que os 11 números do CPF seguem regras bem específicas? Crie uma validação para o CPF que verifique
+se ele é um CPF legítimo baseando-se nessas regras.
+
+- Faça com que os campos de Nome e Sobrenome sejam obrigatórios. Tente fazer o mesmo para os interruptores de
+promoções e novidades (OBS: Não faça isso na sua empresa!!!)
+
+- Use diferentes propriedades para os TextFields, FormControlLabels, Switches e até mesmo o Button. Deixe-os com
+cores diferentes, interruptores sempre desligados, botão que muda de cor quando posiciona o mouse sobre ele (se é que
+isso é possível), enfim, consulte a documentação do Material UI e experimente diversas possibilidades para os componentes.
+
+- Crie seu próprio formulário, do zero, com suas regras, suas funções. Tente não fazer muito parecido com este formulário.
