@@ -1,0 +1,40 @@
+O TextField tem os parâmetros error e helperText. "error" faz com que o campo de texto esteja destacado
+em vermelho se error={true}. helperText="algumacoisa" exibe uma mensagem abaixo do input.
+
+O que quero fazer é criar um estado para guardar os erros de validação do formulário. Vamos guardar essas
+informações em um estado.
+Eu preciso ter um estado inicial que seja sem erros, pois inicialmente não tenho nada preenchido.
+
+O useState terá um objeto. Para o CPF, os erros também serão objetos, e esse objeto vai ter a parte de válido,
+que começará verdadeiro, e um texto de ajuda, inicialmente vazio.
+
+
+const [erros, setErros] = useState({cpf:{valido:true, texto:""}})
+
+
+Daí, no <TextField> do CPF, inserimos os seguintes valores de error e helperText:
+
+error={!erros.cpf.valido}
+helperText={erros.cpf.texto}
+
+
+- erros.cpf.valido pega o momento em que o CPF é válido, ou seja, que não tem erro. Mas a gente quer pegar quando
+tiver erro. A exclamação (!) que o antecede significa o oposto: estamos declarando como erro o momento em que o CPF
+deixa de ser válido.
+
+- erros.cpf.texto pega o texto de ajuda declarado no useState.
+
+- Faça o teste. Insira esses elementos no código e veja se o navegador aceita. Em seguida, altere o valor do useState
+para {cpf:valido:false} e veja como fica no navegador (vale também tirar a exclamação do error).
+
+
+
+
+Agora quero fazer a função de validação do CPF. E ela precisa ser ativada quando sair do campo de texto
+antes de terminar a validação (no nosso caso, sem ter 11 dígitos).
+O evento que faz isso é o onBlur. Ele é ativado quando tiramos o foco daquilo. E por ser um evento, ele tem que ter
+um event com arrow function igual como foi feito no onChange.
+
+
+Por enquanto a gente só vai deixar o campo de CPF dando erro quando sairmos dele. A validação de verdade, que vai
+verificar se tem exatamente 11 dígitos, será feita numa próxima etapa.
