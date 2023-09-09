@@ -9,7 +9,7 @@ function DadosUsuario() {
                 id="email"
                 label="email"
                 type="email"
-                color="secondary"
+                color="primary"
                 variant="outlined"
                 margin="normal"
                 fullWidth
@@ -19,7 +19,7 @@ function DadosUsuario() {
                 id="senha"
                 label="senha"
                 type="password"
-                color="secondary"
+                color="primary"
                 variant="outlined"
                 margin="normal"
                 fullWidth
