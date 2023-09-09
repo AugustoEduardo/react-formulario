@@ -1,0 +1,68 @@
+[Se você tiver clonado o repositório do Github, ao abrir o terminal, precisa digitar npm install antes de
+executar npm start]
+
+
+
+Terminamos a Parte 1 do nosso projeto, que é o Formulário de Cadastro. Agora, nesta Parte 2, iremos criar
+outros formulários, divididos em páginas, que vai armazenar outros tipos de dados.
+
+
+Vamos fazer com que o FormularioCadastro.jsx contenha todos os formulários de cada página. Ou seja, ele
+vai retornar, dentro da sua função, todos os arquivos responsáveis por seus formulários. Sendo assim, crio
+um novo arquivo chamado DadosPessoais.jsx e insiro toda a documentação do FormularioCadastro nele. A única diferença
+é que a função e o export default no final do código se chamarão DadosPessoais em vez de FormularioCadastro.
+O FormularioCadastro.jsx, por sua vez, retornará apenas a tag <DadosPessoais/>, não se esquecendo de importá-la.
+
+
+import React from "react";
+import DadosPessoais from "./DadosPessoais";
+
+function FormularioCadastro({aoEnviar, validarCPF}) {
+
+    return (
+        <DadosPessoais/>
+    )
+}
+
+export default FormularioCadastro
+
+
+
+Salvando o arquivo e abrindo a página, verá que tudo estará funcio--
+Opa... tudo exceto o CPF. Nós não definimos o validarCPF e nem o aoEnviar. Temos que fazer aquela igualdade
+que havíamos feito no App.js para o <DadosPessoais/>.
+
+
+function FormularioCadastro({aoEnviar, validarCPF}) {
+
+    return (
+        <DadosPessoais aoEnviar={aoEnviar} validarCPF={validarCPF} />
+    )
+}
+
+
+
+Agora vamos criar um segundo formulário. Um novo arquivo chamado DadosUsuario.jsx.
+Nesse segundo formulário, teremos um <form> encapsulando dois <TextField>, um para e-mail e outro para senha.
+Vou aproveitar e colocar um outro botão Cadastrar.
+
+E na hora de testar, tenho que importar este novo arquivo no FormularioCadastro.jsx. Lembrando que, como já
+estamos importando o DadosPessoais, o React não aceita que retornemos mais de um componente na mesma hierarquia.
+Para isso serve a tag <Fragment> (ou tag vazia <>), que vai encapsular os dois arquivos importados.
+
+
+
+
+
+[Exercício]
+
+Sabemos que a abordagem do React de componentizar o layout do site é uma forma poderosa de reutilizarmos código
+dentro do mesmo projeto e entre diferentes projetos.
+Pensando nisso, como devemos organizar os componentes para que seja fácil compartilhá-los entre diferentes projetos?
+
+- O ideal é colocar todos os arquivos relacionados a um mesmo componente em uma única pasta.
+Ao fazermos isso, podemos apenas copiar essa pasta de um projeto para outro para reutilizamos nosso componente.
+Nesse caso inclusive, arquivos de imagens, estilos e fontes devem estar dentro da pasta do componente.
+
+- Se tivéssemos uma pasta para guardar os CSS de todos os componentes e outra pasta para guardar todos os assets relacionados
+ao projeto, teremos mais trabalho na hora de passarmos um componente para um novo projeto.
