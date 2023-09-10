@@ -1,0 +1,62 @@
+O problema do switch ase é que quando o seu código tiver uma quantidade muito grande de condicionais,
+a estrutura do código vai ficando mais difícil de ler. E para cada nova condicional, teríamos que escrever
+uma condição para o novo case e o seu retorno.
+
+
+(O switch case tem uma tendência a ir se espalhando pelo projeto que a gente está criando. Se tenho um switch case
+dentro de um projeto é muito provável que vou ter um switch case muito parecido em outras partes do projeto.
+Isso normalmente indica que é um code smell, que estão faltando informações, estruturas mais apropriadas para aquela
+base de código que a gente está trabalhando.
+
+Tem gente que prefere nunca usar switch case, que vai abolir realmente essa funcionalidade, essa palavra-chave do
+JavaScript e nunca quer usar, e tem gente que permite usar, mas é um ponto de atenção sempre que a gente usa.
+E se não quero esse switch case se espalhando pelo meu código e nem ter esse problema de legibilidade de código, o
+que a gente pode ter nesses casos, o que eu posso fazer para não ter um switch case ou para mudar essa estrutura
+para uma coisa mais apropriada?)
+
+
+
+Para a nossa sorte, o switch case que temos funciona numa ordem numérica: 0, 1 e 2. Uma estrutura que consegue
+fazer proveito dessa ordenação e que é mais simples de usar que o switch case é o array.
+Como tenho o caso 0, posso usar o índice 0. Como tenho os casos 1 e 2, posso usar os índices 1 e 2 do array.
+
+Daí, crio uma constante que recebe cada um dos cases do switch e, no final, peço para retornar essa constante
+com o índice que quero, onde tal índice vai mudando graças à função "proximo" que muda seu estado para o próximo
+índice.
+
+
+
+const formularios = [
+    <DadosUsuario aoEnviar={proximo}/>,
+    <DadosPessoais aoEnviar={proximo} validarCPF={validarCPF}/>,
+    <DadosEntrega aoEnviar={aoEnviar}/>
+    ]
+
+    function proximo(){
+        setEtapaAtual(etapaAtual + 1)
+    }
+
+    return (
+        <>
+            {formularios[etapaAtual]}
+        </>
+    )
+
+
+
+Desta maneira não tenho um switch case grande no código. E mesmo se tivesse, o array teria deixado ele bem mais
+legível com a quantidade de linhas que economizamos. Nós não temos mais aquela função grande no meio do código,
+temos somente uma função que muda o estado do componente.
+Também não foi necessário incluir um "caso contrário" com uma Typography, até porque se a gente quiser definir
+um useState que não seja 0, 1 ou 2, ele simplesmente vai deixar de renderizar as páginas. O usuário com certeza
+vai detectar isso como um erro.
+
+
+
+(Se eu tiver um switch que tem uma condicional um pouco diferente, vou ter que usar uma estrutura um pouco diferente,
+mas no geral, se você tem um switch case, é razoavelmente fácil de você usar uma estrutura de array ou uma estrutura
+de objeto, objeto literal.
+
+Aquele problema de acesso ao escopo que a gente tinha, ele não tem mais porque estou usando a própria variável que
+declarei dentro do componente, então ele está no mesmo escopo que minha variável de etapa atual e não tenho mais o
+problema de acesso. Nosso código fica mais limpo, mais fácil de ler, e fácil de dar manutenção.)
