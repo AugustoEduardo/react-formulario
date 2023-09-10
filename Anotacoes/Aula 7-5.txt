@@ -1,0 +1,71 @@
+Agora vamos ter que criar uma maneira de fazer com que um clique no botão Cadastrar leve o usuário
+para o formulário seguinte. O procedimento para isso é bem semelhante ao que está no DadosPessoais,
+o "aoEnviar".
+Então, a função DadosUsuario também terá o parâmetro aoEnviar. Porque assim a função vai receber uma
+propriedade aoEnviar e para ele tanto faz quem mandou essa propriedade para ele, como essa propriedade
+foi gerada, de onde ela veio, se já existia, se não existia. O que importa é que vai usá-la quando for
+dar o submit do formulário dele.
+
+Vamos ao <form> e passar o onSubmit, que vai ser igualzinho ao que foi feito no DadosPessoais, mas por
+enquanto ao aoEnviar não vai passar informação nenhuma.
+
+
+function DadosUsuario({aoEnviar}) {
+
+    return (
+        <form onSubmit={(event) => {
+            event.preventDefault();
+            aoEnviar();
+        }}>
+
+        ................
+
+        </form>
+    )
+}
+
+
+Daí, no FormularioCadastro, vamos chamar uma função que configura a próxima etapa. Como ela precisa ter
+acesso ao useState já configurado, essa função tem que estar dentro da função FormularioCadastro, para
+não termos problema de escopos (useState tem que estar com estado inicial 0).
+
+
+function proximo(){
+    setEtapaAtual(etapaAtual + 1)
+}
+
+
+Em seguida, teremos que colocar o "proximo" dentro das tags dos arquivos. Elas terão o aoEnviar, que receberão
+a função proximo. Somente o último formulário é que terá um aoEnviar (nome que demos) recebendo aoEnviar (parâmetro
+do FormularioCadastro). Por enquanto este formulário de entrega vai estar com o comportamento padrão de recarregar
+a página (para ser mais preciso, ele vai usar a função aoEnviarForm lá do App.js que retorna um console.log).
+
+Você pode, inclusive, aproveitar a ocasião para deixar alguns campos dos formulários como obrigatórios. Porque assim
+evita que passemos para a página seguinte com dados vazios.
+
+
+function formularioAtual(etapa){
+        switch(etapa){
+            case 0:
+                return <DadosUsuario aoEnviar={proximo}/>
+            case 1:
+                return <DadosPessoais aoEnviar={proximo} validarCPF={validarCPF}/>
+            case 2:
+                return <DadosEntrega aoEnviar={aoEnviar}/>
+            default:
+                return <Typography>Erro ao carregar formulário</Typography>
+        }
+    }
+
+
+
+
+(Dessa maneira a gente conseguiu pegar a mesma função, criar uma vez ela e injetar, fazer a injeção de dependências
+através das propriedades para o nosso componente de DadosUsuario e DadosPessoais. E você pode ver que a injeção
+de dependências é muito prática, porque nas primeiras aulas, como a gente tinha feito, esses DadosPessoais estavam
+chamando outra função, estavam chamando a função de aoEnviar do meu formulário como um todo.
+
+Aqui, na hora que mudei o contexto, não precisei mudar nada dentro dos meus DadosPessoais para mudar o comportamento dele.
+O comportamento dele agora não é submeter o formulário e cadastrar em algum lugar ou fazer alguma coisa com esses dados.
+O comportamento dele neste momento é chamar minha próxima etapa. É uma vantagem e uma coisa muito poderosa usar essa
+injeção de dependências através das propriedades dos componentes. Tornam eles muito mais reutilizáveis.)
