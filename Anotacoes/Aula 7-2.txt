@@ -1,0 +1,95 @@
+Temos todos os formulários prontos. OK. Precisamos então separá-los em páginas diferentes e exibí-los
+na ordem correta:
+
+1- DadosUsuario
+2- DadosPessoais
+3- DadosEntrega
+
+E se eu tenho que exibir uma página por vez, eu preciso ter uma condição para apresentar cada um desses
+elementos. A condição que tenho que usar é a que mostra em qual etapa estou: 1, 2 ou 3. Dá pra fazer isso
+com o Switchcase.
+
+
+
+function FormularioCadastro({aoEnviar, validarCPF}) {
+
+    return (
+        <>
+            {switch (etapaAtual)
+                // Insira o código da etapa atual aqui.
+            }
+
+        </>
+    )
+}
+
+
+Quando formos escrever o código acima, o VSCode vai apontar um erro dizendo que ele não reconhece o comando
+Switch. Porque o JSX é um subset do Javascript - ele possui algumas das mesmas funcionalidades do Javascript
+e o switchcase não é uma delas. Mas é possível colocar o switchcase dentro de uma função do Javascript.
+Tal função vai ser assim: para cada etapa "case", eu retorno uma das páginas de formulários.
+
+E no retorno do FormularioCadastro terei que chamar essa função.
+
+
+
+function FormularioCadastro({aoEnviar, validarCPF}) {
+
+    return (
+        <>
+            {formularioAtual(etapaAtual)}
+        </>
+    )
+}
+
+
+function formularioAtual(etapa){
+    switch(etapa){
+        case 0:
+            return <DadosUsuario/>
+        case 1:
+            return <DadosPessoais aoEnviar={aoEnviar} validarCPF={validarCPF}/>
+        case 2:
+            return <DadosEntrega/>
+        default:
+            return <Typography>Erro ao carregar formulário</Typography>
+    }
+}
+
+
+
+Eu sei que eu disse etapas 1, 2 e 3, mas o switchcase começa com 0 em vez de 1, daí temos que usar 0, 1 e 2.
+Ele também precisa de um default e foi aí que retornamos um "caso contrário, retorne uma mensagem de erro".
+
+Falta definir em qual etapaAtual estarei. Posso definir isso como um estado atual (useState). Nosso estado
+inicial será 0.
+
+
+const [etapaAtual, setEtapaAtual] = useState(0)
+
+
+Por fim, se a gente fizer um teste e definir useState(1), ele retornará o formulário de Dados Pessoais. Até
+aí tudo bem, mas se a função tiver sido declarada fora da outra função, vai dar erro quando mexermos no CPF.
+Porque na função formularioAtual não temos como parâmetro o aoEnviar e o validarCPF.
+
+Ao invés de adicionarmos tal parâmetro, vai ser melhor se colocarmos essa função dentro da função de FormularioCadastro,
+já que ela já tem esse parâmetro declarado.
+
+
+
+
+
+
+[Resumo]
+
+Conforme adicionarmos condicionais dentro do código de um sistema criamos diferentes caminhos de execução dentro do código.
+A quantidade diferente de caminhos de execução que temos em nosso código aumenta ou diminui a complexidade ciclomática do
+código dependendo de quantos caminhos diferentes podem ser executados.
+
+Em geral, preferimos código com um baixo nível de complexidade e por isso tentamos reduzir a quantidade de "if"s dentro do
+projeto. Porém podemos gerar comportamentos mais elaborados para nossos componentes se utilizamos renderização condicional
+dentro dele.
+
+Como o JSX não possui todas as funcionalidades do JavaScript, conseguimos fazer renderização condicional chamando uma função
+a partir do JSX.
+O JSX não nos deixa escrever qualquer comando JS dentro dele e por isso precisamos desses mecanismos.
