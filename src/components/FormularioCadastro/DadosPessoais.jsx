@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, TextField, FormControlLabel, Switch} from "@mui/material";
 
-function DadosPessoais({aoEnviar, validarCPF}) {
+function DadosPessoais({aoEnviar, validacoes}) {
     const [nome, setNome] = useState("");
     const [sobrenome, setSobrenome] = useState("");
     const [cpf, setCpf] = useState("");
@@ -9,6 +9,13 @@ function DadosPessoais({aoEnviar, validarCPF}) {
     const [novidades, setNovidades] = useState(true);
 
     const [erros, setErros] = useState({cpf:{valido:true, texto:""}})
+
+    function validarCampos(event) {
+        const {name, value} = event.target
+        const novoEstado = {...erros}
+        novoEstado[name] = validacoes[name](value)
+        setErros(novoEstado)
+    }
 
     return (
         <form onSubmit={event => {
@@ -21,7 +28,6 @@ function DadosPessoais({aoEnviar, validarCPF}) {
                 id="Nome"
                 label="Nome"
                 color="primary"
-                required
                 variant="outlined"
                 margin="normal"
                 fullWidth
@@ -33,7 +39,6 @@ function DadosPessoais({aoEnviar, validarCPF}) {
                 id="Sobrenome"
                 label="Sobrenome"
                 color="primary"
-                required
                 variant="outlined" 
                 margin="normal"
                 fullWidth
@@ -43,17 +48,14 @@ function DadosPessoais({aoEnviar, validarCPF}) {
                 onChange={event => setCpf(event.target.value)}
                 value={cpf}
 
-                onBlur={(event) => {
-                    const ehValido = validarCPF(event.target.value)
-                    setErros({cpf:ehValido})
-                }}
+                onBlur={validarCampos}
                 error={!erros.cpf.valido}
                 helperText={erros.cpf.texto}
 
                 id="CPF"
+                name="cpf"
                 label="CPF"
                 color="primary"
-                required
                 variant="outlined"
                 margin="normal"
                 fullWidth

@@ -1,0 +1,137 @@
+Tirando o "required" que passamos para os TextFields, a única validação que fizemos para os formulários
+foi a validação de CPF nos DadosPessoais. Aqui, eu vou fazer uma validação que vai servir de forma diferente
+para cada campo. Sendo assim, vamos remover todos os required, já que não precisaremos mais deles.
+A função validarCPF também será removida do App.js e inserida num novo arquivo.
+
+Então criarei, dentro da pasta src, uma nova pasta chamada models e um arquivo chamado cadastro.js dentro dele.
+Nesse arquivo, irei inserir a função validarCPF que estava no App.js e criarei uma função de validação de senha,
+que vai funcionar de maneira bem parecida com o validarCPF.
+Ao final, exportaremos as funções como se fossem um objeto, isto é, "export {funcao1, funcao2}".
+
+Daí, no App.js, em vez de definirmos validarCPF, definiremos como "validações", já que o arquivo novo que será chamado
+tem validações de CPF, senha e, futuramente, outras validações. E o objeto que será passado é: "para o cpf, chame o
+validarCPF. Para a senha, chame o validarSenha".
+
+
+import { validarCPF, validarSenha } from './models/cadastro';
+
+class App extends Component {
+
+  render(){
+    return (
+      <Container component="article" maxWidth="sm">
+        <Typography variant="h3" component="h1" align="center">Formulário de Cadastro</Typography>
+        <FormularioCadastro aoEnviar={aoEnviarForm} validacoes={{cpf: validarCPF, senha: validarSenha}}/>
+      </Container>
+    );
+  }
+}
+
+
+
+Passando agora para o FormularioCadastro.jsx, trocaremos o parâmetro "validarCPF" por "validacoes". E já que o novo arquivo
+irá validar possivelmente todos os campos em todos os formulários, iremos passar "validacoes={validacoes}" para todos os itens
+da constante "formularios", exceto o Typography.
+
+
+O DadosPessoais.jsx também tem um validarCPF. Troque-o por validacoes.
+Como essa validação não é somente para o campo de CPF, eu vou ter que deixar o conteúdo do TextField do CPF mais fácil de ser
+reutilizável. Aquilo que está dentro do onBlur será criado numa função da qual poderemos chamar diretamente.
+
+Essa função vai se chamar validarCampos e receberá um evento. Dentro desse evento posso pegar o valor como a gente estava fazendo
+com o evento.target.value, mas também posso pegar o nome desse campo. No caso do onBlur, tenho que ter no TextField um "name="cpf""
+porque é a partir desse nome que a gente vai fazer a associação com a regra de validação que quero fazer.
+O onBlur, portanto, será igual à nova função, validarCampos.
+
+
+function validarCampos(event) {
+        (event) => {
+            const ehValido = validarCPF(event.target.value)
+            setErros({cpf:ehValido})
+        }
+    }
+
+
+<TextField
+    onChange={event => setCpf(event.target.value)}
+    value={cpf}
+
+    onBlur={validarCampos}
+    error={!erros.cpf.valido}
+    helperText={erros.cpf.texto}
+
+    id="CPF"
+    name="cpf"
+
+    ............
+
+/>
+
+
+Só que o conteúdo da função vai ser um pouco mais genérico comparado ao que estava no onBlur.
+Vou fazer a desestruturação de um objeto, que vai ser o event.target. E dentro dele, terá o nome (name) e o valor (value).
+
+(Como a gente está trabalhando com formulários controlados, esse value vai ser obrigatoriamente igual ao estado que tenho nas constantes
+acima, então não tem diferença pegar esse value ou pegar o nome do meu estado, o nome da variável que está guardando estado, mas o value
+já está vindo a partir do evento, então é um pouco mais fácil de trabalhar e reutilizar esse valor.
+
+O que quero fazer é, o meu ehValido vai receber a parte das minhas validações para o campo que tem esse nome. Como ele é um objeto,
+posso chamar como se fosse um array, e tenho que passar para ele o valor. Estou pegando meu objeto de validações, pegando o atributo
+que tem o mesmo nome que o campo no nosso target, no caso vai ser CPF, e passando o valor daquele campo para a parte de validações,
+para executar aquela função.)
+
+E ao invés de dar o setErros para o cpf:ehValido, vou criar um novo estado que vai utilizar o spread operator (...), porque posso ter
+vários erros ao mesmo tempo.
+Crio uma variável que vai receber um objeto com spread operator dos meus erros e vou atribuir o ehValido, o name do nosso campo.
+Desta maneira, é como se o name fosse o cpf do último useState acima, e o ehValido é a segunda parte desse useState (valido:true, texto: "").
+E aí, o setErros receberá a variável nova.
+
+
+function DadosPessoais({aoEnviar, validacoes}) {
+
+    ..............
+
+
+  function validarCampos(event) {
+            const {name, value} = event.target
+            const ehValido = validacoes[name](value)
+            const novoEstado = {...erros, name: ehValido}
+            setErros(novoEstado)
+}
+
+..........
+
+}
+
+
+(A gente tem nosso useState, nossos erros, o nosso erro de CPF continua sendo inicialmente a mesma coisa, só que para validar os campos
+vou agora usar em qualquer um dos campos que eu tiver aqui embaixo, preciso que ele tenha um nome e o valor. Um name e um value.
+Esse name e value a gente pode chamar a função de validação para aquele nome específico, passando o valor específico. Ele vai atribuir um
+novo estado, um novo objeto que vai ser passado para o meu erros, então ele vai substituir todo esse objeto.
+O meu validar campos está funcionando dessa maneira agora.)
+
+
+Por enquanto ainda não passei a validação da senha, então o formulário deve aceitar uma senha de menos de 4 dígitos.
+E um problema que está acontecendo é que ele não está fazendo aquela validação do CPF ter exatamente 11 dígitos. Hmm...
+
+Isso porque ele não está reconhecendo aquele "name" como o nome da variável. Não está entendendo que o "name" é um substituto para o CPF.
+O que posso fazer é remover o name:ehValido do novoEstado e igualar o name do novoEstado ao name do valor das validacoes. Pera, como assim?
+
+Em linguagem de código:
+
+
+function validarCampos(event) {
+    const {name, value} = event.target
+    const novoEstado = {...erros}
+    novoEstado[name] = validacoes[name](value)
+    setErros(novoEstado)
+}
+
+
+(Dessa maneira estou falando: "Cria para mim, se você não tiver, um atributo com esse nome. Se você tiver, sobreescreva-o para mim."
+É outro jeito de fazer. Vamos salvar, voltar na validação, pegar um e-mail, senha, CPF.)
+
+
+
+
+Na próxima etapa, iremos corrigir um outro erro.
