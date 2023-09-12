@@ -1,0 +1,45 @@
+Criamos o console.log dos nossos dados. Beleza.
+Mas não quero o console.log. Quero armazenar os dados quando clico nos botões, quando faço uso do
+aoEnviar. Só que quero fazer isso após passar por todos os formulários, ou seja, quando o aoEnviar
+é chamado no momento em que minha etapaAtual for do mesmo tamanho que o conjunto de formulários.
+Em linhas de código:
+
+
+
+useEffect(() => {
+    if(etapaAtual === formularios.length){
+        aoEnviar(dadosColetados)
+    }
+})
+
+
+
+Com isso, o console do navegador exibirá todos os dados preenchidos e não preenchidos após passar por
+todos os formulários.
+Para que a última página não fique uma página em branco, com apenas o título, podemos adicionar uma
+<Typography> em nossa lista de formulários. Ao fazer isso, temos que não apenas importar a Typography,
+como também corrigir o useEffect e fazer com que a etapaAtual seja o tamanho do formularios - 1. Porque
+com isso ele exibirá a tipografia no último elemento da lista.
+
+
+Outra coisa que seria legal fazer é adicionar um indicativo de onde o usuário está. Algo que mostre
+de antemão quantos formulários tem no total e em qual etapa ele se encontra.
+Dando uma olhada na documentação do Material UI, nota-se que isso é possível com o <Stepper>.
+Ao criar o Stepper, tem que deixar claro em qual etapa está ativa, o que no nosso caso será o etapaAtual.
+Cada Stepper tem um <Step>. E se cada step vai desenhar um label, terei um step label.
+
+
+
+return (
+    <>
+        <Stepper activeStep={etapaAtual}>
+            <Step><StepLabel>Login</StepLabel></Step>
+            <Step><StepLabel>Pessoal</StepLabel></Step>
+            <Step><StepLabel>Entrega</StepLabel></Step>
+            <Step><StepLabel>Finalização</StepLabel></Step>
+        </Stepper>
+
+        {formularios[etapaAtual]}
+        
+    </>
+    )
