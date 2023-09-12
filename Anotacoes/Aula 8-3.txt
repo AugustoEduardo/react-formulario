@@ -1,0 +1,100 @@
+Até o momento, somente o último formulário está gravando dados no console porque só ele está recebendo
+o aoEnviar. Precisamos fazer com que todos os formulários gravem seus dados.
+
+
+Vou criar uma função que coleta esses dados. Tal função vai receber os dados e, nela, iremos alterar
+o estado dos dados coletados porque quero agregar esses dados para passar no final para a propriedade
+de aoEnviar, para quando ela estiver pronta e eu chamá-la.
+Com isso, a função "proximo" não vai mais receber "dados" como parâmetro porque ele só vai atualizar a
+etapaAtual. E como a nova função vai gerenciar dados, temos que definir outro useState, o qual vai começar
+com um objeto vazio.
+
+
+const [dadosColetados, setDados] = useState({})
+
+
+function coletarDados(dados){
+    setDados[{...dadosColetados, ...dados}]
+}
+
+
+
+(O que quero fazer é coletar dados. A gente vai chamar o setDados, e o setDados vai receber um novo objeto
+que vai ter os dados coletados até este momento. Vou dar um stretch operator (...) para ele abrir, não jogar
+o objeto inteiro aqui, mas pegar cada atributo e adicionar nesse novo objeto que estou criando. E o que vou fazer é
+uma concatenação com os dados que a gente for receber. Vou sempre adicionando dados, todos os dados de todos os campos
+dentro desses dados coletados. Não vai fazer diferença se foi coletado por DadosUsuario, pelo DadosEntrega ou pelo
+formulário de DadosPessoais. Ele vai sempre me dar um pacotão de dados no final, o nosso setDados.)
+
+E o coletarDados vai ser o novo parâmetro de cada tag dos formulários, substituindo aoEnviar e proximo. E uma vez que
+os dados tenham sido coletados, chamamos a função "proximo" e damos um console.log.
+
+
+function coletarDados(dados){
+    setDados[{...dadosColetados, ...dados}];
+    proximo();
+    console.log(dadosColetados);
+}
+
+
+Preenchendo o formulário no navegador, temos um pequeno erro: o console.log está exibindo dados do formulário anterior ao
+que foi preenchido. Ou seja, o primeiro formulário não guardará nada, o segundo formulário vai armazenar os dados do primeiro
+formulário e assim por diante.
+
+Isso acontece porque qualquer função que a gente recebe do useState, como o setDados e o setEtapaAtual, é assíncrona. Então,
+quando chamamos o setDados na função coletarDados, a gente "agendou para usar no futuro". Depois que é agendada, ele roda o
+restante do código. Quando chegamos no console.log(dadosColetados), os dados ainda não foram atualizados.
+
+
+Para ajeitar isso, vamos ter que usar outro hook, o useEffect.
+useEffect faz uso de dois efeitos combinados: executar o componente assim que for montado, e ser chamado sempre que algum estado
+for atualizado (na verdade ele tem três efeitos, mas o terceiro não será abordado aqui).
+
+Queremos usar com esse segundo efeito, então crio o useEffect como uma arrow function anônima (isto é, sem parâmetro) que vai
+receber o console.log dos dadosColetados.
+
+
+
+(Esse use effect vai ser chamado quando componente for montado, ou seja, logo antes de renderizar, quando for atualizado,
+então quando a gente mudar o estado dele de alguma maneira, seja pela etapa atual, seja pelos dados coletados, e quando esse
+componente for desmontado.
+
+Na hora em que ele for desmontado, tem alguma coisa que a gente precisa fazer, que veremos um pouco mais para a frente,
+que é uma limpeza desse componente ou não.)
+
+
+
+Após preencher todos os formulários, o console vai ter registrado todos os dados que inserimos dos formulários. O último deles,
+por também receber a função coletarDados, vai levar o usuário para uma página vazia ao Finalizar Cadastro, pois nosso código não
+tem um quarto índice para os formulários.
+
+
+
+
+
+
+[Exercício]
+
+
+Dado o código abaixo:
+
+
+function Pessoa(){
+    const [idade, setIdade] = useState(25);
+
+    function aniversario(){
+        setIdade(idade+1);
+        console.log(idade);    
+    }
+
+    return(<>....</>);
+
+}
+
+
+Qual o valor esperado de vermos no console ao chamarmos a função aniversario?
+
+
+- Veremos o valor 25, já que a função setIdade é assíncrona e o componente não irá esperar a execução dela
+antes de ir para a próxima linha.
+O valor esperado é o valor da variável idade antes dela ser alterada.
