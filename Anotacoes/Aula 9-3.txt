@@ -1,0 +1,137 @@
+Iremos reutilizar os métodos de validação e aplicá-los para os outros campos.
+Antes de começar, podemos ir nos DadosPessoais e DadosUsuario e adicionar um name="nomeDoCampo" nos campos de texto
+que queremos fazer as validações. Mesmo que não façamos as validações de todos os campos nesta aula, podemos deixar o
+name="nomeDoCampo" pronto caso a gente queira fazer uma validação no futuro.
+
+
+Pegaremos a função validarCampos, juntamente com o useState dos erros na linha acima, dos DadosPessoais, copiaremos e
+colaremos no DadosUsuario. Depois disso, adicione "validacoes" como parâmetro da função DadosUsuario, ao lado da "aoEnviar".
+
+Veja que o validarCampos não está sendo usado ainda, então preciso chamá-lo para aonde queremos fazer a validação. Por isso
+iremos no TextField da senha, adicionar um onBlur, que chamará essa função. E já que acabamos de colocar name="senha" nesse
+TextField, ele vai atribuir a senha ao novoEstado[name] da função.
+Além disso, não temos cpf nesse arquivo, então no useState, mude para "senha:{valido:true, texto=""}", de forma que o estado
+inicial seja uma senha válida e vazia.
+Por fim, para criar uma mensagem de erro, escreva abaixo do onBlur um error e um helperText.
+
+
+const [erros, setErros] = useState({senha:{valido:true, texto:""}})
+
+
+.................
+
+
+<TextField
+                onChange={event => setSenha(event.target.value)}
+                value={senha}
+                onBlur={validarCampos}
+                error={!erros.senha.valido}
+                helperText={erros.senha.texto}
+                id="senha"
+                name="senha"
+                label="senha"
+
+                ..............
+
+
+O error diz: "Se a senha não for válida, exibirei uma mensagem de erro". O helperText pega o texto que definimos no cadastro.js
+
+Pronto, a mensagem de erro já está sendo exibida no navegador quando a senha não passa na validação que definimos (entre 4 e 72 dígitos).
+Porém, mesmo com esse erro, ainda é possível avançar para a próxima página...
+Eu vou ter que ir no onSubmit e fazer uma verificação de que não tem nenhum erro antes de prosseguir para o próximo formulário.
+Dá pra fazer isso com um simples "if": se passar na validação, uso o "aoEnviar".
+
+    return (
+        <form onSubmit={(event) => {
+            event.preventDefault();
+            if(possoEnviar()){
+                aoEnviar({email, senha});
+            }
+        }}>
+        .........
+    )
+
+
+
+Não vai funcionar ainda porque não definimos o que é "possoEnviar". Então criarei essa função.
+
+(Nessa função, vou iterar sobre meus erros, vou fazer um for. Para cada campo dentro dos meus erros, vou ter que fazer uma
+verificação. Para cada campo dos meus erros irei validar. Esse campo, essa maneira de fazer o array, vai me trazer só o nome
+das chaves que tenho dentro desse objeto. Se quero pegar o valor daquela chave, tenho que falar aos meus erros, para o campo
+que peguei, se for válido, deixo passar. Se não for válido, quero retornar false, quer dizer que não posso.
+
+E se eu passar por toda a validação e não tiver um erro, retorno true. Quer dizer que posso enviar os dados)
+
+
+    function possoEnviar(){
+        for (let campo in erros){
+            if(!erros[campo].valido){
+                return false;
+            }
+        }
+        return true;
+    }
+
+(campo é uma variável que acabamos de criar, por isso o "let")
+
+
+Vamos fazer a mesma validação para o CPF. Antes disso, podemos mudar o nome dos botões "Cadastrar" para "Próximo", já que
+eles estão simplesmente passando o usuário para a página seguinte ao invés de cadastrá-lo. Mude-os no final dos arquivos
+DadosPessoais.jsx e DadosUsuario.jsx, entre a tag <Button>.
+
+Basta copiar a função possoEnviar para o DadosPessoais e acrescentar o if contendo o possoEnviar no onSubmit.
+
+(Poderia ter um else para fazer outras validações, para aumentar a mensagem de erro. Aí você pode fazer da maneira que você preferir.
+Você tem várias opções a partir disso, mas pelo menos você sabe que se você pode enviar, você vai enviar, se você não pode, você vai
+chamar aquela função e não vai fazer nada, você vai ignorar aquele botão.)
+
+
+
+Para validar o campo de Nome, podemos até usar o "required" do HTML, mas quero ver se nossas funções podem servir para ele.
+No App.js acrescente, na parte de validacoes do FormularioCadastro, o nome que receberá o validarSenha. Desta maneira, o campo
+de nome vai ter a mesma validação e mensagem de erro que o campo de senha, isto é, só vai permitir entre 4 e 72 caracteres.
+Fizemos isso porque a forma de validação de nome é bem parecida com a da senha e apenas aproveitamos o código já escrito.
+
+
+E caso você não esteja satisfeito e faça parte do grupo de pessoas cujo nome tem menos de 4 letras... você pode criar uma terceira
+validação no cadastro.js para nomes que funcione de maneira bem semelhante à validação de senhas. Ou isso ou você muda a validação
+da senha para 3 caracteres no mínimo. Deixarei essa parte para você treinar.
+
+
+Terminaremos a validação do nome indo ao DadosPessoais.jsx e acrescentando o nome no useState, que terá as mesmas chamadas do
+cpf ao lado. Além disso, temos que criar o onBlur, error e helperText no campo de texto referente ao nome.
+
+
+const [erros, setErros] = useState({cpf:{valido:true, texto:""}, nome:{valido:true, texto:""}})
+
+
+
+<TextField
+                onChange={event => setNome(event.target.value)}
+                value={nome}
+                onBlur={validarCampos}
+                error={!erros.nome.valido}
+                helperText={erros.nome.texto}
+                id="Nome"
+                label="Nome"
+                name="nome"
+
+
+                ............
+
+
+(O que está escrito em error e helperText funciona mesmo que você tenha criado a validação para nome no cadastro.js)
+
+
+Com isto, nossos formulários estão impedidos de avançar até que todos os campos tenham passado nas validações que criamos.
+
+
+(No nosso caso, estou usando o onBlur para validar, que é quando a gente tira o foco, que sei que a pessoa já terminou de digitar.
+Poderia fazer a validação no onChange também, enquanto ela está digitando já estou validando o que ela está fazendo. E no final
+a gente tem a validação se posso submeter o formulário no possoEnviar. Essa função de possoEnviar a gente vai ter que ver
+tudo que a gente tem.
+
+Posso abstrair isso de várias maneiras, fazer uma refatoração para ter menos duplicação de código, mas aqui você já consegue ver
+como você faz a validação de formulários. Fique à vontade para refatorar isso, para tirar essas funções desse DadosUsuario e
+do DadosPessoais que estão duplicados e jogar isso para outros lugares recebendo parâmetros, e assim por diante. Aqui a gente
+fez uma abordagem um pouco mais direta.)

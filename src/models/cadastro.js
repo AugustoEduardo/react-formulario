@@ -14,5 +14,13 @@ function validarSenha(senha){
     }
 }
 
+function validarNome(nome){
+  if (nome.length < 2 || nome.length > 72){
+    return ({valido:false, texto:"Nome deve ter entre 2 e 72 dígitos"})
+  } else {
+    return ({valido:true, texto:""})
+  }
+}
 
-export {validarCPF, validarSenha}
+
+export {validarCPF, validarSenha, validarNome}

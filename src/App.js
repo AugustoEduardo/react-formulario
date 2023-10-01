@@ -4,7 +4,7 @@ import FormularioCadastro from './components/FormularioCadastro/FormularioCadast
 import { Container, Typography } from '@mui/material';
 import "@fontsource/roboto/400.css"
 
-import { validarCPF, validarSenha } from './models/cadastro';
+import { validarCPF, validarNome, validarSenha } from './models/cadastro';
 
 class App extends Component {
 
@@ -12,7 +12,7 @@ class App extends Component {
     return (
       <Container component="article" maxWidth="sm">
         <Typography variant="h3" component="h1" align="center">Formulário de Cadastro</Typography>
-        <FormularioCadastro aoEnviar={aoEnviarForm} validacoes={{cpf: validarCPF, senha: validarSenha}}/>
+        <FormularioCadastro aoEnviar={aoEnviarForm} validacoes={{cpf: validarCPF, senha: validarSenha, nome: validarNome}}/>
       </Container>
     );
   }
