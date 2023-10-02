@@ -1,0 +1,150 @@
+[Preparação para a próxima aula]
+
+Da maneira que temos nosso componente FormularioCadastro, até esse momento, ele recebe algumas propriedades que não faz nada com elas.
+A única coisa que ele faz é repassar essas propriedades para os componentes filhos dele.
+Essa maneira de trabalhar com propriedades é chamada de "prop drilling" e é considerada uma má prática. Esta propriedade:
+
+- Pode tornar o código mais complexo e difícil de manter.
+O prop drilling ocorre quando você precisa passar dados de um componente pai para um componente filho, mas há vários componentes
+intermediários que não usam esses dados, apenas o repassam. Isso pode tornar o código mais complexo, menos legível e mais difícil
+de manter, à medida que a aplicação cresce e mais componentes são adicionados à hierarquia.
+
+- Essa é uma má prática porque estamos repetindo esse padrão em diversos componentes.
+Esse acoplamento muito forte entre os componentes dificulta a reutilização deles.
+Pense num elemento que só precisa saber de uma propriedade quando um componente "bisneto" dele precisa desse componente.
+Isso significa que eles estão muito acoplados.
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+Como pudemos ver no exercício acima, a propriedade de validações do <FormularioCadastro> presente no App.js caiu no erro de prop drilling.
+Essa propriedade está vindo do arquivo FormularioCadastro.jsx, do qual recebe como propriedade o aoEnviar e o validacoes. Se eu der um
+CTRL + F e pesquisar por "validacoes", ele só achou as validações na hora em que ele foi instanciar e criar os componentes dele.
+O DadosUsuario, o DadosPessoais e o DadosEntrega. Ou seja, o nosso formulário de cadastro só conhece as validações porque a gente falou
+para ele que, para ele conhecer essas validações, ele vai ter que passar para baixo. Ele não faz nada com elas a não ser passar
+para os filhos dele.
+
+Eu não quero mais que ele conheça esse "validacoes", quero remover essa propriedade da função FormularioCadastro. Porque ele conhecer
+essa propriedade é uma complexidade a mais que a gente está adicionando no nosso sistema. Conhecer uma propriedade que ele não usa é
+uma prática dentro do react. Quero evitar isso. E para evitar, não vou conseguir passar minhas validações como propriedades para o
+"const formularios" na hora que a gente estiver usando eles.
+
+
+(E se você pensar bem, se a gente não fizer isso, é até mais fácil de reutilizar os nossos formulários individualmente. Por exemplo,
+se eu quiser pegar o <DadosPessoais> e jogar em outra página, outro lugar, e só quero esse pedaço, posso pegá-lo, copiar, instanciar
+esse novo elemento lá, e está tudo certo. Só passo para ele, só preciso saber o que ele vai fazer quando ele for enviar esse formulário,
+quando for enviar esses dados, mas não necessariamente vou querer validações, então não preciso colocar as validações aqui.
+
+Então, se eu quero validações, como faço isso? E se quero adicionar essas validações e manter elas, como a gente faz? Para isso,
+vou ter que passar essas informações de qual validação vai ser feita de outra maneira. No final, quero que meu DadosEntrega, meu 
+DadosUsuario e meu DadosPessoais saibam quais são as validações deles. Mas essa validação não vai por propriedade. Essa validação
+vai vir de algum outro lugar.
+
+Esse lugar é um contexto. Vou criar um contexto do qual todo mundo que esteja dentro dele consiga usá-lo. Como todo mundo que esteja
+dentro daquele escopo do contexto vai conseguir usar ele.)
+
+
+
+(Contexto é uma forma da gente criar um grupo de dados, compor um grupo de dados ou grupo de funções, funcionalidades, que quero transmitir
+para vários elementos da minha árvore de renderização. Vários componentes dentro do react. Esses componentes podem estar cinco ou seis níveis
+abaixo do meu elemento pai ou podem estar dentro do elemento pai.
+
+Para isso crio um contexto, e esse contexto vai me prover as informações uniformemente para todo mundo. Mas só vou usar ele se declarativamente
+falar que estou usando aquele contexto, que quero saber sobre isso, senão não preciso nem saber que aquele contexto existe, não quero nem saber
+do que se trata e que eu precisaria ter um contexto, provavelmente, ou que alguém embaixo de mim precisaria de um contexto.)
+
+
+Vou criar uma pasta "contexts" dentro da pasta "src" e que terá um arquivo que será as ValidacoesCadastro.js. Neste arquivo, vou importar o
+React e dizer para ele criar um contexto através do React.createContext(). Esse contexto deverá ter as funções de validação que eu quero.
+Para facilitar, vou atribuir o contexto a uma variável e dar um export default.
+
+
+
+import React from 'react';
+
+const ValidacoesCadastro = React.createContext();
+
+export default ValidacoesCadastro;
+
+
+
+(Tenho que falar para ele criar esse contexto de validação e quero fazer com que outros sistemas no react usem esse contexto.)
+
+Começando pelo DadosPessoais.jsx, tenho que importar o hook de useContext do "react". Ele também é um react hook, assim como o useState
+e o useEffect. Dessa forma, se eu quiser usar aquele contexto, escrevo "useContext(ValidacoesCadastro)" algumas linhas abaixo.
+Mas preciso também importar o ValidacoesCadastro, pois a gente só importou o useContext (dá pra fazer o auto import enquanto estiver
+digitando o código da linha acima). Vou falar que as informações que quero retornar do contexto são as validações.
+
+
+
+import React, { useState, useContext } from "react";
+
+function DadosPessoais({aoEnviar}) {
+    ........
+    const validacoes = useContext(ValidacoesCadastro)
+    ........
+}
+
+
+
+Vou fazer a mesma coisa para o DadosUsuario.jsx. Importar useContext, remover o "validacoes" das propriedades da função e dizer
+que quero retornar as validações do useContext(ValidacoesCadastro).
+
+Salvando e indo ao navegador, encontraremos um erro ao digitar a senha. Porque eu não declarei no ValidacoesCadastro.js que informações
+estarão dentro do contexto. No nosso caso, quem tem essas informações são as validacoes do <FormularioCadastro> no App.js.
+O que quero fazer, na verdade, é criar um provedor do meu contexto. Falo para ele pegar o contexto que já declarei e criar um provedor
+para mim.
+Esse provedor é quem vai ter as informações desse contexto. É aqui que vou falar que o valor que quero que você use quando estiver usando
+esse contexto vai ser igual a esse objeto de validações que tenho embaixo.
+Transferirei as validacoes do FormularioCadastro e colocarei dentro do value do provedor.
+
+
+return (
+      <Container component="article" maxWidth="sm">
+        <Typography variant="h3" component="h1" align="center">Formulário de Cadastro</Typography>
+
+        <ValidacoesCadastro.Provider value={{cpf: validarCPF, senha: validarSenha, nome: validarNome}}>
+          
+        </ValidacoesCadastro.Provider>
+
+        <FormularioCadastro aoEnviar={aoEnviarForm}/>
+      </Container>
+);
+
+
+(Vou falar que quem estiver dentro desse provedor que eu criei, qualquer elemento que for usar esse contexto de validação, vai ter que usar
+essas informações do value. Dessa maneira, minhas validações não precisam mais estar dentro do meu formulário. Meu formulário pode estar na
+linha de cima, dentro do ValidacoesCadastro.)
+
+
+return (
+      <Container component="article" maxWidth="sm">
+        <Typography variant="h3" component="h1" align="center">Formulário de Cadastro</Typography>
+
+        <ValidacoesCadastro.Provider value={{cpf: validarCPF, senha: validarSenha, nome: validarNome}}>
+          
+        <FormularioCadastro aoEnviar={aoEnviarForm}/>
+
+        </ValidacoesCadastro.Provider>
+      </Container>
+);
+
+
+
+(Tenho meu provedor de contexto que vai falar quais informações que os elementos que estão dentro desse contexto que estou declarando,
+todo mundo que estiver aqui dentro desses elementos, no caso o formulário de cadastro, vai poder conhecer esse contexto. Não necessariamente
+precisa conhecer. Meu DadosEntrega.jsx, por exemplo, não conhece o contexto, ele não sabe que o contexto existe.
+
+O meu FormularioCadastro.jsx não sabe que o contexto existe. Ele não precisa saber. Mas meu DadosUsuario sabe. Ele está falando que quer
+usar esse contexto. Meu DadosPessoais também quer usar esse contexto.
+
+No navegador, os problemas não aparecem mais e as mensagens de erro aparecem caso as informações não passem nas validações.)
+
+
+
+(Dessa forma, a gente não tem mais o problema de ter informações sendo passadas para componentes que não precisam de informações,
+meu formulário de cadastro não precisa daquela informação, e criei um provedor que vai fornecer as informações para quem estiver dentro dele,
+independente se está em um nível diretamente abaixo, como o <FormularioCadastro>, ou se está dentro do FormularioCadastro.jsx, sendo um filho
+da função FormularioCadastro. Não importa. Ele vai buscar esse contexto independente da hierarquia, vai subir até onde o contexto provider
+estiver para achar as informações que ele precisa.)
