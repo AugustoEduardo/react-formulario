@@ -1,0 +1,83 @@
+Extra: O que aconteceria se eu tivesse uma validação no App.js sem o Provider?
+
+
+
+Como já vimos, se tirarmos o <ValidacoesCadastro.Provider> e/ou seu value, vai dar erro ao preencher cpf, nome ou senha
+porque a validação não está definida. Ainda assim, dá pra fazer uma validação padrão se criarmos um contexto no ValidacoesCadastro.js
+
+Lá no React.createContext(), posso colocar os valores de cpf, nome e senha que o contexto vai usar como padrão.
+Para um exemplo básico, posso criar uma função que dê um console.log e que retorne os valores dos useState que definimos para nome,
+cpf e senha (valido:true, texto:""). E o contexto terá esses três campos com os valores da função.
+
+
+
+App.js:
+
+class App extends Component {
+
+  render(){
+    return (
+      <Container component="article" maxWidth="sm">
+        <Typography variant="h3" component="h1" align="center">Formulário de Cadastro</Typography>
+          <FormularioCadastro aoEnviar={aoEnviarForm}/>
+      </Container>
+    );
+  }
+}
+
+
+
+
+ValidacoesCadastro.js:
+
+
+import React from 'react';
+
+const ValidacoesCadastro = React.createContext({cpf: semValidacao, senha: semValidacao, nome: semValidacao});
+
+
+function semValidacao(dados){
+    console.log(dados);
+    return {valido:true, texto:""}
+}
+
+export default ValidacoesCadastro;
+
+
+
+
+Por padrão, se eu não usar nenhum provider, vou usar essas informações que criei no contexto.
+Se formos ao navegador, o formulário vai estar funcionando normalmente. Só não vai ter validação porque definimos como
+padrão que não há validações para os três campos.
+Um exemplo melhor: No App.js, crie dois formulários. Um com o Provider contendo valores que definimos antes e um sem o Provider.
+
+
+
+class App extends Component {
+
+  render(){
+    return (
+      <Container component="article" maxWidth="sm">
+        <Typography variant="h3" component="h1" align="center">Formulário de Cadastro</Typography>
+        <ValidacoesCadastro.Provider value={{cpf: validarCPF, senha: validarSenha, nome: validarNome}}>
+          <FormularioCadastro aoEnviar={aoEnviarForm}/>
+        </ValidacoesCadastro.Provider>
+        <FormularioCadastro aoEnviar={aoEnviarForm}/>
+      </Container>
+    );
+  }
+}
+
+
+
+O primeiro formulário terá aquelas validações que definimos anteriormente, do cpf ter 11 dígitos e nome e senha terem menos
+de 72 caracteres, mas não vai dar console.log do que digitamos.
+O segundo formulário, por outro lado, vai dar console.log do que foi digitado, mas não terá nenhuma validação. Ou seja, ele teve
+a "não validação" dada no ValidacoesCadastro.js, que é um valor padrão para o contexto.
+
+Se eu tiver um provider, ele usará as informações do provider. Se eu não tiver, ele usará as informações padrão do contexto.
+
+
+(Dessa maneira tenho mais flexibilidade de como trabalhar os meus componentes. Se quero criar um provider para ele ou se não
+quero criar um provider. Mas os dois têm que ter o contexto. O contexto está definido, e aí o contexto tem o que ele vai fazer por padrão,
+se não tiver um provider, ou o que ele vai fazer com o provider, com o que o provider definiu para ele.)
