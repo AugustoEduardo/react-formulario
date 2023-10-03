@@ -1,0 +1,221 @@
+Ainda temos algumas repetições no nosso código. Veja como no DadosPessoais e no DadosUsuario tivemos que escrever
+a função validarCampos. Você concorda que o código ficaria mais bonito se essa função fosse colocada em outro lugar,
+para uso geral e com poucas modificações em cada arquivo?
+
+
+Primeiro, remova o formulário extra do App.js, não precisaremos mais dele. Já ficou bem claro que se eu quiser mudar essas
+validações para diferentes contextos, diferentes providers, consigo mudar diretamente aqui sem mudar necessariamente meu
+formulário de cadastro, meu objeto onde a gente está declarando as coisas.
+
+
+Voltando ao DadosUsuario.jsx, podemos ver que a função validarCampos tem várias dependências atreladas à função DadosUsuario.
+Por exemplo, ele vai precisar do event, vai receber a parte da chamada normal dele, mas vai precisar de um estado (novoEstado).
+O estado que ele está recebendo é um erro declarado no useState acima. Eu teria que receber esses erros através de um parâmetro.
+Ele também chama o setErros. Também vai precisar da atribuição do nosso estado. Então, setErros tem que ser também um parâmetro.
+E vai precisar das validacoes, porque ele chama o validacoes[name](value). Elas também deverão ser parâmetros.
+
+
+Ou seja, para abstrair o validarCampos, eu teria que ter uma série de dependências. E três delas vem diretamente do React.
+Uma é o context (validacoes) e outra é o estado (setErros). E se tenho um estado que quero compartilhar com uma função que na verdade
+vai alterar o próprio estado, não seria mais fácil se o validarCampos tivesse um estado interno dele e tivesse um useState, e nesse
+useState a gente faz o que precisamos?
+
+
+
+function validarCampos(event, erros, setErros, validacoes){
+    useState();
+    ....................
+}
+
+
+
+Mas como a gente viu, o useState e os hooks não são muito legais de usar dentro de outras funções que não são funções do próprio
+react. Não são componentes do react. Então, como a gente faria isso e como vamos trabalhar nesse caso?
+
+(Na verdade, a gente tem um outro detalhe sobre hooks que não falamos. Podemos usar outros hooks dentro de um hook que a gente está
+querendo. Ou seja, posso criar meus próprios hooks customizados. Então se eu criar um hook customizado, eu conseguiria usá-lo no
+validarCampos, conseguiria fazer o validarCampos virar parte de um hook meu e ter a minha lógica sendo executada, da mesma maneira que
+temos o hook para o useState, useContext e useEffect.
+
+Mas então como a gente cria um hook customizado para não precisar ficar passando esse monte de parâmetros para a nossa função, um monte de
+dependências dela? Pensando que pode ter muito mais. Se uma função vai manipular vários estados diferentes, vou ter que ter seis ou oito,
+dez dependências para ela só para passar meu estado e a função de atribuição desse estado.)
+
+
+Vou criar uma pasta "hooks" dentro da pasta src e nele terá um arquivo "useErros.js". É nessa pasta que teremos todos os nossos hooks
+customizados.
+É importante lembrar que todo hook que criarmos obrigatoriamente vai começar com "use". Porque é uma regra, uma convenção
+do react, de que estamos usando um hook.
+
+Nesse arquivo, vou importar o React e criar uma função useErros, que terá o const[erros, setErros] e a função validarCampos.
+Posso inclusive tirar essas duas partes dos DadosPessoais e DadosUsuario.
+O useState da função useErros não está sendo chamado, então importarei ele também.
+
+
+(Importei o useState, declarei que essa função tem um estado e esse estado é parte do react, parte dessa função que é
+um hook customizado meu.)
+
+O que eu quero é: quem for usar o hook useErros terá acesso ao estado de erros e à função de validação. Para isso, vou precisar
+dar um return do mesmo modo que o useState faz. Retorno um array contendo os erros e o validarCampos.
+E é claro, ao final preciso dar um export default da função useErros.
+
+
+
+
+import {React, useState} from "react";
+
+function useErros(){
+    
+    const [erros, setErros] = useState({senha:{valido:true, texto:""}})
+
+    function validarCampos(event) {
+        const {name, value} = event.target
+        const novoEstado = {...erros}
+        novoEstado[name] = validacoes[name](value)
+        setErros(novoEstado)
+    }
+
+    return [erros, validarCampos]
+}
+
+export default useErros;
+
+
+Daí, se eu quiser que o DadosUsuario chame o useErros, posso digitar useErros() e fazer o auto import (tem parênteses porque é uma
+função que precisa ser executada). Como ela retorna os erros e a função de validar campos, tenho que fazer o mesmo.
+
+
+const [erros, validarCampos] = useErros()
+
+
+Feito isso, o onBlur do TextField vai deixar de exibir um erro porque ele reconhece o validarCampos, assim como o error vai entender
+que o "erros" vem do useErros.
+
+(Ou seja, estou indiretamente acessando o estado "erros" do useState, só que estou devolvendo só o assessor para esse estado. Ele não
+deixou ninguém de fora controlar como esses erros vão ser atribuídos. Meu setErros está protegido, encapsulado, mas todo mundo pode
+acessar e ver quais erros tenho dentro desse hook. Assim como estou chamando o validarCampos.
+Só que ainda falta definir o "validacoes".
+
+Se a gente voltar nos DadosUsuario, as validações estão vindo do contexto, certo? Se elas estão vindo dentro do contexto o que posso
+fazer é usar uma injeção, fazer ela passar por parâmetro, porque meus dados de usuário vão ter validações diferentes dos meus dados pessoais,
+que vão ter validações diferentes dos dados de entrega. Então essas validações que vêm do contexto, que vão depender do contexto,
+vão ser diferentes para cada componente. Aí sim, como é uma coisa que pode variar muito mais que o resto, vou passar para o parâmetro.
+
+E no useErros, vou receber validacoes como parâmetro. Dessa maneira, a gente tem as validações funcionando.)
+
+
+
+function useErros(validacoes){
+    
+    const [erros, setErros] = useState({senha:{valido:true, texto:""}})
+
+    function validarCampos(event) {
+        const {name, value} = event.target
+        const novoEstado = {...erros}
+        novoEstado[name] = validacoes[name](value)
+        setErros(novoEstado)
+    }
+
+    return [erros, validarCampos]
+}
+
+export default useErros;
+
+
+
+
+No DadosUsuario.jsx:
+
+
+const validacoes = useContext(ValidacoesCadastro)
+
+const [erros, validarCampos] = useErros(validacoes)
+
+
+
+
+
+Com isso, já tenho o hook funcionando para o DadosUsuario. Agora vamos fazer ele funcionar para o DadosPessoais. Basta escrever
+a mesma coisa que as linhas de cima, o useContext e o useErros(validacoes).
+Porém, vai dar um erro quando entrarmos na etapa de preencher os dados pessoais. Porque no nosso useErros, só definimos o estado
+inicial da senha. Não tem nada definido para o nome e para o cpf!
+
+
+
+O estado inicial vai mudar dependendo das validações que colocarmos. Para cada validação, vou ter um campo diferente, vou precisar ter
+um estado inicial configurado.
+Daí, vou criar uma função que passe as validações. Tal função vai ser interna, não será exportada para outros módulos. E eu quero que ela
+retorne um novo estado.
+
+"O estado inicial vai ser um novo objeto. Para cada campo em "validacoes", o estado inicial desse campo vai ser igual às atribuições que
+havíamos definido. Ele é válido e o texto de ajuda é nulo. Ao final, retorno o estado inicial."
+
+
+Na função useErros, uma constante será igual à nova função, e o useState receberá essa nova função.
+
+
+
+function useErros(validacoes){
+
+    const estadoInicial = criarEstadoInicial(validacoes)
+    
+    const [erros, setErros] = useState(estadoInicial)
+
+    function validarCampos(event) {
+        const {name, value} = event.target
+        const novoEstado = {...erros}
+        novoEstado[name] = validacoes[name](value)
+        setErros(novoEstado)
+    }
+
+    return [erros, validarCampos]
+}
+
+function criarEstadoInicial(validacoes) {
+    const estadoInicial = {}
+    for (let campo in validacoes) {
+        estadoInicial[campo] = {valido:true, texto:""}
+    }
+
+    return estadoInicial
+}
+
+export default useErros;
+
+
+
+
+Senha, nome e cpf funcionando do jeito que estavam antes. A última parte que continua repetida é a função possoEnviar.
+Então também posso deixá-la no hook de useErros. Removo-a dos arquivos, colo no useErros.js e faço com que ele retorne
+também a função possoEnviar, junto do erros e do validarCampos.
+Por causa disso, tenho que também ir nos dois arquivos e acrescentar o possoEnviar no useErros(validacoes).
+
+
+
+(Dessa maneira a gente consegue criar nosso próprio hook, nosso hook customizado de useErros, e ele extrai para mim, abstrai muitas
+dependências que a gente tinha, controla um estado interno desse hook, e esse estado interno estou expondo através do retorno dessa
+função de useErros que a gente criou. Tudo o que estava repetido no DadosPessoais e no DadosUsuario veio para uma linha.
+
+Quero usar os erros para essa validação, ele me devolve as três coisas que preciso. Meu estado de erro, minha função de validação
+e minha função de possoEnviar. Nosso componente fica muito mais declarativo, como deveria ser.)
+
+
+
+
+
+
+
+[Exercício]
+
+
+Vimos que muito da lógica entre os componentes do formulário estava duplicada e precisávamos fazer uma refatoração para extrair
+essa lógica. Para isso criamos um hook customizado dentro do nosso projeto. Por que precisamos de um hook e não podemos usar
+uma função JS padrão para isso?
+
+
+- Precisamos criar um hook porque o React não consegue interagir com funções normais do JS.
+Se não fizéssemos isso, a abstração criada teria que receber tudo a partir de parâmetros e o código ficaria mais complicado do que
+usando essa abordagem.
+
+
+Um hook customizado nada mais é do que uma função JS com algumas regras a mais, como o nome que precisa começar com "use".

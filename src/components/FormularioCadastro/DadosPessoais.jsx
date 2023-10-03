@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Button, TextField, FormControlLabel, Switch} from "@mui/material";
 import ValidacoesCadastro from "../../contexts/ValidacoesCadastro";
+import useErros from "../../hooks/useErros";
 
 function DadosPessoais({aoEnviar}) {
     const [nome, setNome] = useState("");
@@ -9,25 +10,11 @@ function DadosPessoais({aoEnviar}) {
     const [promocoes, setPromocoes] = useState(true);
     const [novidades, setNovidades] = useState(true);
 
-    const [erros, setErros] = useState({cpf:{valido:true, texto:""}, nome:{valido:true, texto:""}})
-
     const validacoes = useContext(ValidacoesCadastro)
 
-    function validarCampos(event) {
-        const {name, value} = event.target
-        const novoEstado = {...erros}
-        novoEstado[name] = validacoes[name](value)
-        setErros(novoEstado)
-    }
+    const [erros, validarCampos, possoEnviar] = useErros(validacoes)
 
-    function possoEnviar(){
-        for (let campo in erros){
-            if(!erros[campo].valido){
-                return false;
-            }
-        }
-        return true;
-    }
+
 
     return (
         <form onSubmit={event => {
@@ -48,6 +35,7 @@ function DadosPessoais({aoEnviar}) {
                 color="primary"
                 variant="outlined"
                 margin="normal"
+                required
                 fullWidth
             />
 
@@ -60,6 +48,7 @@ function DadosPessoais({aoEnviar}) {
                 color="primary"
                 variant="outlined" 
                 margin="normal"
+                required
                 fullWidth
             />
 
@@ -77,6 +66,7 @@ function DadosPessoais({aoEnviar}) {
                 color="primary"
                 variant="outlined"
                 margin="normal"
+                required
                 fullWidth
             />
 

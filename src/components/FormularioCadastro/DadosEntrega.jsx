@@ -23,6 +23,7 @@ function DadosEntrega({aoEnviar}) {
                 color="primary"
                 variant="outlined"
                 margin="normal"
+                required
             />
 
             <TextField
@@ -57,6 +58,7 @@ function DadosEntrega({aoEnviar}) {
                 color="primary"
                 variant="outlined"
                 margin="normal"
+                required
             />
 
             <TextField
@@ -68,6 +70,7 @@ function DadosEntrega({aoEnviar}) {
                 color="primary"
                 variant="outlined"
                 margin="normal"
+                required
             />
 
             <Button type="submit" variant="contained" fullWidth>
